@@ -4,7 +4,7 @@ namespace HttpRest
 {
     public interface IHttpRestResponse
     {
-        RestResult RestResult { get; }
+        HttpRestResult RestResult { get; }
 
         HttpStatusCode StatusCode { get; }
 
@@ -18,7 +18,7 @@ namespace HttpRest
 
     public sealed class RestResponse<T> : IHttpRestResponse<T>
     {
-        public RestResult RestResult { get; }
+        public HttpRestResult RestResult { get; }
 
         public HttpStatusCode StatusCode { get; }
 
@@ -26,7 +26,7 @@ namespace HttpRest
 
         public T? Content { get; }
 
-        public RestResponse(RestResult restResult, HttpStatusCode statusCode, Exception? innerException, T? content)
+        public RestResponse(HttpRestResult restResult, HttpStatusCode statusCode, Exception? innerException, T? content)
         {
             RestResult = restResult;
             StatusCode = statusCode;
@@ -37,6 +37,6 @@ namespace HttpRest
 
     public static class HttpResponseExtensions
     {
-        public static bool IsSuccess(this IRestResponse response) => response.RestResult == RestResult.Success;
+        public static bool IsSuccess(this IHttpRestResponse response) => response.RestResult == HttpRestResult.Success;
     }
 }
