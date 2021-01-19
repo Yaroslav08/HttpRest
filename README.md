@@ -1,4 +1,4 @@
-[![NuGet](https://img.shields.io/nuget/v/Yaroslav08.HttpRest.svg)](https://www.nuget.org/packages/HttpRest)
+[![NuGet](https://img.shields.io/nuget/v/HttpRest.svg)](https://www.nuget.org/packages/HttpRest)
 # HttpRest - extensions for HttpClient
 ## Download
 For install this library paste next code to your PMC
