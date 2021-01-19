@@ -16,7 +16,7 @@ namespace HttpRest
         T? Content { get; }
     }
 
-    public sealed class RestResponse<T> : IHttpRestResponse<T>
+    public sealed class HttpRestResponse<T> : IHttpRestResponse<T>
     {
         public HttpRestResult RestResult { get; }
 
@@ -26,7 +26,7 @@ namespace HttpRest
 
         public T? Content { get; }
 
-        public RestResponse(HttpRestResult restResult, HttpStatusCode statusCode, Exception? innerException, T? content)
+        public HttpRestResponse(HttpRestResult restResult, HttpStatusCode statusCode, Exception? innerException, T? content)
         {
             RestResult = restResult;
             StatusCode = statusCode;
