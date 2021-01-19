@@ -273,5 +273,96 @@ namespace HttpRest
             }
         }
         #endregion
+
+        #region Upload
+        public static ValueTask<IHttpRestResponse> UploadAsync(this HttpClient client, string path, Stream stream, string name, string filename, Func<Stream, Stream, Func<Stream, Stream, ValueTask>, ValueTask>? filter = null, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
+        {
+            return UploadAsync(client, HttpRestConfig.Default, path, stream, name, filename, filter, parameters, headers, progress, cancel);
+        }
+
+        public static ValueTask<IHttpRestResponse> UploadAsync( this HttpClient client, HttpRestConfig config, string path, Stream stream, string name, string filename, Func<Stream, Stream, Func<Stream, Stream, ValueTask>, ValueTask>? filter = null, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
+        {
+            return UploadAsync(client, config, path, new[] { new UploadEntry(stream, name, filename) { Filter = filter } }, parameters, headers, progress, cancel);
+        }
+
+        public static ValueTask<IHttpRestResponse> UploadAsync( this HttpClient client, string path, string name, string filename, Func<Stream, Stream, Func<Stream, Stream, ValueTask>, ValueTask>? filter = null, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
+        {
+            return UploadAsync(client, HttpRestConfig.Default, path, name, filename, filter, parameters, headers, progress, cancel);
+        }
+
+        public static async ValueTask<IHttpRestResponse> UploadAsync(this HttpClient client, HttpRestConfig config, string path, string name, string filename, Func<Stream, Stream, Func<Stream, Stream, ValueTask>, ValueTask>? filter = null, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
+        {
+            var fi = new FileInfo(filename);
+            await using var stream = fi.OpenRead();
+            return await UploadAsync(client, config, path, new[] { new UploadEntry(stream, name, fi.Name) { Filter = filter } }, parameters, headers, progress, cancel).ConfigureAwait(false);
+        }
+
+        public static ValueTask<IHttpRestResponse> UploadAsync(this HttpClient client, string path, IList<UploadEntry> entries, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
+        {
+            return UploadAsync(client, HttpRestConfig.Default, path, entries, parameters, headers, progress, cancel);
+        }
+
+        public static async ValueTask<IHttpRestResponse> UploadAsync(this HttpClient client, HttpRestConfig config, string path, IList<UploadEntry> entries, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
+        {
+            HttpResponseMessage? response = null;
+            try
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Post, path);
+                using var multipart = new MultipartFormDataContent();
+                ProcessHeaders(request, headers);
+                if (parameters is not null)
+                {
+                    foreach (var parameter in parameters)
+                    {
+                        multipart.Add(new StringContent(parameter.Value.ToString() ?? string.Empty), parameter.Key);
+                    }
+                }
+                var progressProxy = default(Action<long>);
+                if (progress is not null)
+                {
+                    var totalSize = CalcTotalSize(entries);
+                    if (totalSize.HasValue)
+                    {
+                        var totalProcessed = 0L;
+                        progressProxy = processed =>
+                        {
+                            totalProcessed += processed;
+                            progress(totalProcessed, totalSize.Value);
+                        };
+                    }
+                }
+                foreach (var upload in entries)
+                {
+                    multipart.Add(new UploadStreamContent(upload, config.TransferBufferSize, progressProxy, cancel), upload.Name, upload.FileName);
+                }
+                request.Content = multipart;
+                response = await client.SendAsync(request, cancel).ConfigureAwait(false);
+                if (!response.IsSuccessStatusCode)
+                {
+                    return new HttpRestResponse<object>(HttpRestResult.HttpError, response.StatusCode, null, default);
+                }
+                return new HttpRestResponse<object>(HttpRestResult.Success, response.StatusCode, null, default);
+            }
+            catch (Exception e)
+            {
+                return ErrorResponse<object>(e, response?.StatusCode ?? 0);
+            }
+        }
+
+        private static long? CalcTotalSize(IList<UploadEntry> entries)
+        {
+            var total = 0L;
+            foreach (var upload in entries)
+            {
+                if (!upload.Stream.CanSeek)
+                {
+                    return null;
+                }
+
+                total += upload.Stream.Length;
+            }
+            return total;
+        }
+        #endregion
     }
 }
