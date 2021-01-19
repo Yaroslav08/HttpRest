@@ -1,0 +1,5 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net5.0;netcoreapp3.1;netstandard2.1</TargetFramework>
+  </PropertyGroup>
+</Project>
