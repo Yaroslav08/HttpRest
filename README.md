@@ -16,7 +16,7 @@ var response = await client.GetAsync<List<ToDo>>("https://jsonplaceholder.typico
 var result = response.IsSuccess();
 var toDos = response.Content; 
 
-var response = await client.PostAsync("https://jsonplaceholder.typicode.com/todos", new PostRequest { Title = "Hello world!" }, compress: true); //use compress
+var response = await client.PostAsync("https://jsonplaceholder.typicode.com/todos", new PostRequest { Title = "Hello world!" }, true); //use compress
 
 // Download with progress
 var response = await client.DownloadAsync(
