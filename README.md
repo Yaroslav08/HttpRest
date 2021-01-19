@@ -6,7 +6,7 @@ var client = new HttpClient();
 
 // Get
 var response = await client.GetAsync<List<ToDo>>("https://jsonplaceholder.typicode.com/todos");
-// Check result and get TestGetResponse
+// Check result and get List<ToDo>
 var result = response.IsSuccess();
 var toDos = response.Content; 
 
