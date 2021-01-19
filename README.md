@@ -1,5 +1,5 @@
 # HttpRest - extensions for HttpClient
- ### Usage example
+ ### Basic usage
 
 ```csharp
 var client = new HttpClient();
