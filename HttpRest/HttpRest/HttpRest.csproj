@@ -5,9 +5,9 @@
     <Authors>Yaroslav08</Authors>
     <PackageProjectUrl>https://github.com/Yaroslav08/HttpRest</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Yaroslav08/HttpRest</RepositoryUrl>
-    <PackageReleaseNotes>1.1 release include:
-Download any files with progress</PackageReleaseNotes>
-    <Version>1.1.0</Version>
+    <PackageReleaseNotes>1.2 release include:
+Uplaod any files with progress</PackageReleaseNotes>
+    <Version>1.2.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
