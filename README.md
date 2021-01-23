@@ -3,7 +3,7 @@
 ## Download
 For install this library paste next code to your PMC
 ```csharp
-Install-Package HttpRest -Version 1.2.0
+Install-Package HttpRest -Version 1.4.0
 ```
  ### Basic usage
 
@@ -22,9 +22,8 @@ var response = await client.PostAsync("https://jsonplaceholder.typicode.com/todo
 var response = await client.DownloadAsync(
     "https://api.usn.com/photos/9da94f2f-65fd-49ec-a2ad-9850b72f4ef6.png",
     "photo.png",
-    (processed, total) =>
+    (processed, total, percent) =>
     {
-        var percent = (processed * 100) / total;
         Console.WriteLine($"{percent}%");
     });
 
@@ -36,9 +35,8 @@ var response = await client.UploadAsync(
         new UploadEntry(coverStream, "photoCover", "Cover.png").WithGzip()
     },
     null,
-    progress: (processed, total) =>
+    progress: (processed, total, percent) =>
     {
-        var percent = (processed * 100) / total;
         Console.WriteLine($"{percent}%");
     });
 ```
