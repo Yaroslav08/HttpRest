@@ -190,12 +190,12 @@ namespace HttpRest
         #endregion
 
         #region Download
-        public static ValueTask<IHttpRestResponse> DownloadAsync(this HttpClient client, string path, string filename, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
+        public static ValueTask<IHttpRestResponse> DownloadAsync(this HttpClient client, string path, string filename, IDictionary<string, object>? headers = null, Action<long, long, long>? progress = null, CancellationToken cancel = default)
         {
             return DownloadAsync(client, HttpRestConfig.Default, path, filename, headers, progress, cancel);
         }
 
-        public static async ValueTask<IHttpRestResponse> DownloadAsync(this HttpClient client, HttpRestConfig config, string path, string filename, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
+        public static async ValueTask<IHttpRestResponse> DownloadAsync(this HttpClient client, HttpRestConfig config, string path, string filename, IDictionary<string, object>? headers = null, Action<long, long, long>? progress = null, CancellationToken cancel = default)
         {
             var delete = true;
             try
@@ -217,12 +217,12 @@ namespace HttpRest
             }
         }
 
-        public static ValueTask<IHttpRestResponse> DownloadAsync(this HttpClient client, string path, Stream stream, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
+        public static ValueTask<IHttpRestResponse> DownloadAsync(this HttpClient client, string path, Stream stream, IDictionary<string, object>? headers = null, Action<long, long, long>? progress = null, CancellationToken cancel = default)
         {
             return DownloadAsync(client, HttpRestConfig.Default, path, stream, headers, progress, cancel);
         }
 
-        public static async ValueTask<IHttpRestResponse> DownloadAsync(this HttpClient client, HttpRestConfig config, string path, Stream stream, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
+        public static async ValueTask<IHttpRestResponse> DownloadAsync(this HttpClient client, HttpRestConfig config, string path, Stream stream, IDictionary<string, object>? headers = null, Action<long, long, long>? progress = null, CancellationToken cancel = default)
         {
             HttpResponseMessage? response = null;
             try
@@ -250,7 +250,8 @@ namespace HttpRest
                                 await stream.WriteAsync(buffer.AsMemory(0, read), cancel).ConfigureAwait(false);
 
                                 totalProcessed += read;
-                                progress(totalProcessed, totalSize.Value);
+                                //(processed * 100) / total
+                                progress(totalProcessed, totalSize.Value, (totalProcessed * 100) / totalSize.Value);
                             }
                         }
                         else
