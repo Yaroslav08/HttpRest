@@ -6,10 +6,10 @@
     <PackageProjectUrl>https://github.com/Yaroslav08/HttpRest</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Yaroslav08/HttpRest</RepositoryUrl>
     <PackageReleaseNotes>
-      1.3 release include:
-      Added percent field for download action
+      1.4 release include:
+      Added percent field for upload action
     </PackageReleaseNotes>
-    <Version>1.3.0</Version>
+    <Version>1.4.0</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
