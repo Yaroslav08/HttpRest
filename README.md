@@ -3,7 +3,7 @@
 ## Download
 For install this library paste next code to your PMC
 ```csharp
-Install-Package HttpRest -Version 1.4.0
+PC> Install-Package HttpRest -Version 1.4.0
 ```
  ### Basic usage
 
