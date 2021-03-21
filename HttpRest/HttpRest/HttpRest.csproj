@@ -6,10 +6,10 @@
     <PackageProjectUrl>https://github.com/Yaroslav08/HttpRest</PackageProjectUrl>
     <RepositoryUrl>https://github.com/Yaroslav08/HttpRest</RepositoryUrl>
     <PackageReleaseNotes>
-      1.4 release include:
-      Added percent field for upload action
+      1.4.1 release include:
+      Removing percent item from download and upload methods progress
     </PackageReleaseNotes>
-    <Version>1.4.0</Version>
+    <Version>1.4.1</Version>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
