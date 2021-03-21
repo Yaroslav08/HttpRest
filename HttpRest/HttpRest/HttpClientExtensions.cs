@@ -190,12 +190,12 @@ namespace HttpRest
         #endregion
 
         #region Download
-        public static ValueTask<IHttpRestResponse> DownloadAsync(this HttpClient client, string path, string filename, IDictionary<string, object>? headers = null, Action<long, long, long>? progress = null, CancellationToken cancel = default)
+        public static ValueTask<IHttpRestResponse> DownloadAsync(this HttpClient client, string path, string filename, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
         {
             return DownloadAsync(client, HttpRestConfig.Default, path, filename, headers, progress, cancel);
         }
 
-        public static async ValueTask<IHttpRestResponse> DownloadAsync(this HttpClient client, HttpRestConfig config, string path, string filename, IDictionary<string, object>? headers = null, Action<long, long, long>? progress = null, CancellationToken cancel = default)
+        public static async ValueTask<IHttpRestResponse> DownloadAsync(this HttpClient client, HttpRestConfig config, string path, string filename, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
         {
             var delete = true;
             try
@@ -217,12 +217,12 @@ namespace HttpRest
             }
         }
 
-        public static ValueTask<IHttpRestResponse> DownloadAsync(this HttpClient client, string path, Stream stream, IDictionary<string, object>? headers = null, Action<long, long, long>? progress = null, CancellationToken cancel = default)
+        public static ValueTask<IHttpRestResponse> DownloadAsync(this HttpClient client, string path, Stream stream, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
         {
             return DownloadAsync(client, HttpRestConfig.Default, path, stream, headers, progress, cancel);
         }
 
-        public static async ValueTask<IHttpRestResponse> DownloadAsync(this HttpClient client, HttpRestConfig config, string path, Stream stream, IDictionary<string, object>? headers = null, Action<long, long, long>? progress = null, CancellationToken cancel = default)
+        public static async ValueTask<IHttpRestResponse> DownloadAsync(this HttpClient client, HttpRestConfig config, string path, Stream stream, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
         {
             HttpResponseMessage? response = null;
             try
@@ -251,7 +251,7 @@ namespace HttpRest
 
                                 totalProcessed += read;
                                 //(processed * 100) / total
-                                progress(totalProcessed, totalSize.Value, (totalProcessed * 100) / totalSize.Value);
+                                progress(totalProcessed, totalSize.Value);
                             }
                         }
                         else
@@ -276,34 +276,34 @@ namespace HttpRest
         #endregion
 
         #region Upload
-        public static ValueTask<IHttpRestResponse> UploadAsync(this HttpClient client, string path, Stream stream, string name, string filename, Func<Stream, Stream, Func<Stream, Stream, ValueTask>, ValueTask>? filter = null, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long, long>? progress = null, CancellationToken cancel = default)
+        public static ValueTask<IHttpRestResponse> UploadAsync(this HttpClient client, string path, Stream stream, string name, string filename, Func<Stream, Stream, Func<Stream, Stream, ValueTask>, ValueTask>? filter = null, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
         {
             return UploadAsync(client, HttpRestConfig.Default, path, stream, name, filename, filter, parameters, headers, progress, cancel);
         }
 
-        public static ValueTask<IHttpRestResponse> UploadAsync( this HttpClient client, HttpRestConfig config, string path, Stream stream, string name, string filename, Func<Stream, Stream, Func<Stream, Stream, ValueTask>, ValueTask>? filter = null, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long, long>? progress = null, CancellationToken cancel = default)
+        public static ValueTask<IHttpRestResponse> UploadAsync( this HttpClient client, HttpRestConfig config, string path, Stream stream, string name, string filename, Func<Stream, Stream, Func<Stream, Stream, ValueTask>, ValueTask>? filter = null, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
         {
             return UploadAsync(client, config, path, new[] { new UploadEntry(stream, name, filename) { Filter = filter } }, parameters, headers, progress, cancel);
         }
 
-        public static ValueTask<IHttpRestResponse> UploadAsync( this HttpClient client, string path, string name, string filename, Func<Stream, Stream, Func<Stream, Stream, ValueTask>, ValueTask>? filter = null, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long, long>? progress = null, CancellationToken cancel = default)
+        public static ValueTask<IHttpRestResponse> UploadAsync( this HttpClient client, string path, string name, string filename, Func<Stream, Stream, Func<Stream, Stream, ValueTask>, ValueTask>? filter = null, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
         {
             return UploadAsync(client, HttpRestConfig.Default, path, name, filename, filter, parameters, headers, progress, cancel);
         }
 
-        public static async ValueTask<IHttpRestResponse> UploadAsync(this HttpClient client, HttpRestConfig config, string path, string name, string filename, Func<Stream, Stream, Func<Stream, Stream, ValueTask>, ValueTask>? filter = null, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long, long>? progress = null, CancellationToken cancel = default)
+        public static async ValueTask<IHttpRestResponse> UploadAsync(this HttpClient client, HttpRestConfig config, string path, string name, string filename, Func<Stream, Stream, Func<Stream, Stream, ValueTask>, ValueTask>? filter = null, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
         {
             var fi = new FileInfo(filename);
             await using var stream = fi.OpenRead();
             return await UploadAsync(client, config, path, new[] { new UploadEntry(stream, name, fi.Name) { Filter = filter } }, parameters, headers, progress, cancel).ConfigureAwait(false);
         }
 
-        public static ValueTask<IHttpRestResponse> UploadAsync(this HttpClient client, string path, IList<UploadEntry> entries, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long, long>? progress = null, CancellationToken cancel = default)
+        public static ValueTask<IHttpRestResponse> UploadAsync(this HttpClient client, string path, IList<UploadEntry> entries, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
         {
             return UploadAsync(client, HttpRestConfig.Default, path, entries, parameters, headers, progress, cancel);
         }
 
-        public static async ValueTask<IHttpRestResponse> UploadAsync(this HttpClient client, HttpRestConfig config, string path, IList<UploadEntry> entries, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long, long>? progress = null, CancellationToken cancel = default)
+        public static async ValueTask<IHttpRestResponse> UploadAsync(this HttpClient client, HttpRestConfig config, string path, IList<UploadEntry> entries, IDictionary<string, object>? parameters = null, IDictionary<string, object>? headers = null, Action<long, long>? progress = null, CancellationToken cancel = default)
         {
             HttpResponseMessage? response = null;
             try
@@ -328,7 +328,7 @@ namespace HttpRest
                         progressProxy = processed =>
                         {
                             totalProcessed += processed;
-                            progress(totalProcessed, totalSize.Value, (totalProcessed * 100) / totalSize.Value);
+                            progress(totalProcessed, totalSize.Value);
                         };
                     }
                 }
